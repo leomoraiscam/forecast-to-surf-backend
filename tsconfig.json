@@ -21,18 +21,18 @@
     "allowJs": true,
     "paths": {
       "@src/*": ["./src/*"],
-      "@test/*": ["./test/*"]
+      "@test/*": ["./tests/*"]
     },
     "rootDirs": [
       "./src",
-      "./test"
+      "./tests"
     ],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
   "include": [
     "./src/**/*.ts",
-    "./test/**/*.ts"
+    "./tests/**/*.ts"
   ],
   "exclude": [
     "./node_modules/*",
