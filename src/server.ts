@@ -14,6 +14,10 @@ export class SetupServer extends Server {
     this.setupController();
   }
 
+  public getApp(): Application {
+    return this.app;
+  }
+
   private setupExpress(): void {
     this.app.use(bodyParser.json());
   }
@@ -24,7 +28,5 @@ export class SetupServer extends Server {
     this.addControllers([forcastController]);
   }
 
-  public getApp(): Application {
-    return this.app;
-  }
+ 
 }

@@ -8,7 +8,7 @@ jest.mock('axios');
 describe('StormGlass client', () => {
   const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-  it('should return the normalize forecast fromt the stormglass service', async () => {
+  it('should return the normalize forecast from the StormGlass service', async () => {
     const lat = -33.792726;
     const lng = 151.289824;
 
@@ -21,10 +21,10 @@ describe('StormGlass client', () => {
     expect(response).toEqual(stormGlassNormalized3HoursFixture);
   });
 
-  it('should get a generic error from', async () => {
+
+  it('should exclude incomplete data points', async () => {
     const lat = -33.792726;
     const lng = 151.289824;
-
 
     const incompleteResponse = {
       hours: [
@@ -32,15 +32,14 @@ describe('StormGlass client', () => {
           windDirection: {
             noaa: 300
           },
-          time: "2020-04-26T00:00:00+00:00"
+          time: "2020-04-26T00:00:00+00:00",
         }
       ]
-    };
+    }
 
-    mockedAxios.get.mockResolvedValue({data: incompleteResponse});
+    mockedAxios.get.mockResolvedValue({ data: incompleteResponse });
 
     const stormGlass = new StormGlass(mockedAxios);
-
     const response = await stormGlass.fetchPoints(lat, lng);
 
     expect(response).toEqual([]);
@@ -55,10 +54,9 @@ describe('StormGlass client', () => {
     const stormGlass = new StormGlass(mockedAxios);
 
     await expect(stormGlass.fetchPoints(lat, lng)).rejects.toThrow(
-      'Unexpected error when trying to communicate to StormGlasses: Network Error'
+      'Unexpected error when trying to communicate to StormGlass: Network Error'
     );
   });
-
 
   it('should get an StormGlassesResponseError when the StormGlasses service responds with error', async () => {
     const lat = -33.792726;
