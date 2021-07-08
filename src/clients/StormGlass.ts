@@ -70,7 +70,7 @@ export class StormGlass {
       return this.normalizeResponse(response.data);
 
     } catch (error) {
-      if(error.response && error.response.status) {
+      if(HTTPUtil.Request.isRequestError(error)) {
         throw new StormGlassResponseError(
           `Error: ${JSON.stringify(error.response.data)} Code:${
             error.response.status
