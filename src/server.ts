@@ -17,6 +17,12 @@ export class SetupServer extends Server {
     await this.databaseSetup();
   }
 
+  public start(): void {
+    this.app.listen(this.port, () => {
+      console.log('🚀 Server is running')
+    })
+  }
+
   public getApp(): Application {
     return this.app;
   }
