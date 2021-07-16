@@ -21,7 +21,7 @@
     "allowJs": true,
     "paths": {
       "@src/*": ["./src/*"],
-      "@test/*": ["./tests/*"]
+      "@tests/*": ["./tests/*"]
     },
     "rootDirs": [
       "./src",
