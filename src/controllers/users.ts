@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import { Controller, Post } from '@overnightjs/core';
 import { User } from '@src/model/user';
+import { BaseController } from '.';
 
 @Controller('users')
-export class UsersController {
+export class UsersController extends BaseController{
   @Post('')
   public async create(req: Request, res: Response): Promise<void> {
     try {
@@ -13,7 +14,7 @@ export class UsersController {
       
       res.status(201).send(result);
     } catch (error) {
-      res.status(500).send({ error: 'Internal Server Error' });
+      this.sendCreateUpdateErrorResponse(res, error)
     }
   }
 }
