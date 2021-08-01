@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { ForecastPoint, StormGlass } from '@src/clients/StormGlass';
 import { Beach } from '@src/model/beach';
 import { InternalError } from '@src/utils/errors/internal-error';
@@ -24,27 +25,34 @@ export class Forecast {
   ) {}
 
   public async processForecastForBeaches(beaches: Beach[]): Promise<TimeForecast[]> {
-    const pointsWithCorrectSources: BeachForecast[] = [];
-    logger.info(`Preparing the forecast for ${beaches.length} beaches`);
 
     try {
-      for(const beach of beaches) {
-        const rating = new this.RatingService(beach);
+      const beachForecast = await this.calculateRating(beaches);
+      const timeForecast = this.mapForecastByTime(beachForecast);
+      return timeForecast.map((t) => ({
+        time: t.time,
 
-        const points = await this.stormGlass.fetchPoints(beach.lat, beach.lng);
+        forecast: _.orderBy(t.forecast, ['rating'], ['desc']),
+      }));
   
-        const enrichedBeachData = this.enrichedBeachData(points, beach, rating);
-  
-        pointsWithCorrectSources.push(...enrichedBeachData); 
-      }
-  
-      return this.mapForecastByTime(pointsWithCorrectSources)
     } catch (error) {
-      logger.error(error);
 
       throw new ForecastProcessingInternalError(error.message)
     }
   } 
+
+  private async calculateRating(beaches: Beach[]): Promise<BeachForecast[]> {
+    const pointsWithCorrectSources: BeachForecast[] = [];
+    logger.info(`Preparing the forecast for ${beaches.length} beaches`);
+    for (const beach of beaches) {
+      const rating = new this.RatingService(beach);
+      const points = await this.stormGlass.fetchPoints(beach.lat, beach.lng);
+      const enrichedBeachData = this.enrichedBeachData(points, beach, rating);
+      pointsWithCorrectSources.push(...enrichedBeachData);
+    }
+    return pointsWithCorrectSources;
+  }
+
 
 
   private enrichedBeachData(points: ForecastPoint[], beach: Beach, rating: Rating): BeachForecast[] {
