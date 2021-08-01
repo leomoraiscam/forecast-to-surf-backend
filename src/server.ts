@@ -12,6 +12,7 @@ import expressPino from 'express-pino-logger';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import apiDocs from './swagger.json';
+import { apiErrorValidator } from './middlewares/api-error-validator';
 
 export class SetupServer extends Server {
   private server?: http.Server;
@@ -25,6 +26,7 @@ export class SetupServer extends Server {
     await this.docsSetup();
     this.setupController();
     await this.databaseSetup();
+    this.setupErrorHandlers();
   }
 
   public start(): void {
@@ -50,6 +52,10 @@ export class SetupServer extends Server {
         origin: '*',
       })
     );
+  }
+
+  private setupErrorHandlers(): void {
+    this.app.use(apiErrorValidator);
   }
 
   private async docsSetup(): Promise<void> {
