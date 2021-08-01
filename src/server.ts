@@ -10,6 +10,8 @@ import logger from './logger';
 import * as http from 'http';
 import expressPino from 'express-pino-logger';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import apiDocs from './swagger.json';
 
 export class SetupServer extends Server {
   private server?: http.Server;
@@ -20,6 +22,7 @@ export class SetupServer extends Server {
 
   public async init(): Promise<void> {
     this.setupExpress();
+    await this.docsSetup();
     this.setupController();
     await this.databaseSetup();
   }
@@ -47,6 +50,10 @@ export class SetupServer extends Server {
         origin: '*',
       })
     );
+  }
+
+  private async docsSetup(): Promise<void> {
+    this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(apiDocs));
   }
 
   private setupController(): void {
