@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 
 /*eslint-disable @typescript-eslint/no-empty-interface*/
