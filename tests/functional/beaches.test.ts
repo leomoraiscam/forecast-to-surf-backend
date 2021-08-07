@@ -34,7 +34,7 @@ describe('Beaches functional', () => {
     });
 
 
-    it.skip('should return validation error when a field is invalid', async () => {
+    it('should return validation error when a field is invalid', async () => {
       const newBeach = {
         lat: 'invalid_string',
         lng: 151.289824,
@@ -49,12 +49,31 @@ describe('Beaches functional', () => {
         code: 400,
         error: 'Bad Request',
         message:
-          'Beach validation failed: lat: Cast to Number failed for value "invalid_string" (type string) path "lat"',
+          'Beach validation failed: lat: Cast to Number failed for value "invalid_string" (type string) at path "lat"',
       })
     });
 
-    it.skip('should return 500 when there is any error other than validation error', async () => {
-      //TODO think in a way to throw a 500
+    it('should return 500 when there is any error other than validation error', async () => {
+      jest
+        .spyOn(Beach.prototype, 'save')
+        .mockImplementationOnce(() => Promise.reject('fail to create beach'));
+      const newBeach = {
+        lat: -33.792726,
+        lng: 46.43243,
+        name: 'Manly',
+        position: 'E',
+      };
+
+      const response = await global.testRequest
+        .post('/beaches')
+        .send(newBeach)
+        .set({ 'x-access-token': token });
+      expect(response.status).toBe(500);
+      expect(response.body).toEqual({
+        code: 500,
+        error: 'Internal Server Error',
+        message: 'Something went wrong!',
+      });
     });
   })
 })
