@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { ForecastPoint, StormGlass } from '@src/clients/StormGlass';
-import { Beach } from '@src/model/beach';
+import { Beach } from '@src/models/beach';
 import { InternalError } from '@src/utils/errors/internal-error';
 import logger from '@src/logger';
 import { Rating } from './rating';
@@ -10,7 +10,7 @@ export interface TimeForecast {
   forecast: BeachForecast[];
 }
 
-export interface BeachForecast extends Omit<Beach, 'user'>, ForecastPoint {}
+export interface BeachForecast extends Omit<Beach, 'userId'>, ForecastPoint {}
 
 export class ForecastProcessingInternalError extends InternalError {
   constructor(message: string) {

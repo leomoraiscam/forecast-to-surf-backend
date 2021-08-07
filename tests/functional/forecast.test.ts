@@ -1,8 +1,8 @@
-import { Beach, GeoPosition } from "@src/model/beach";
+import { Beach, GeoPosition } from "@src/models/beach";
 import nock from 'nock';
 import stormGlassWeather3HoursFixture from '../fixtures/stormglass_weather_3_hours.json';
 import apiForecastResponse1BeachFixture from '../fixtures/api_forecast_response_1_beach.json';
-import { User } from '@src/model/user';
+import { User } from '@src/models/user';
 import AuthService from '@src/services/auth';
 
 describe('Beach forecast functional tests', () => {
@@ -18,12 +18,12 @@ describe('Beach forecast functional tests', () => {
     await User.deleteMany({});
     const user = await new User(defaultUser).save();
 
-    const defaultBeach = {
+    const defaultBeach: Beach = {
       lat: -33.792726,
       lng: 151.289824,
       name: 'Manly',
       position: GeoPosition.E,
-      user: user.id
+      userId: user.id
     };
 
     await new Beach(defaultBeach).save();

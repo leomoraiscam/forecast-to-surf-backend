@@ -1,5 +1,5 @@
-import { Beach } from '@src/model/beach';
-import { User } from '@src/model/user';
+import { Beach } from '@src/models/beach';
+import { User } from '@src/models/user';
 import AuthService from '@src/services/auth';
 
 describe('Beaches functional', () => {

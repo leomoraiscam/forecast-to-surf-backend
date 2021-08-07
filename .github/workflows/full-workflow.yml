@@ -1,6 +1,6 @@
 name: forecast-surf
 
-on: ['push']
+on: ['push', 'pull_request']
 
 jobs:
 

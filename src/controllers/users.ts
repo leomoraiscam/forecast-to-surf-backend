@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Controller, Get, Middleware, Post } from '@overnightjs/core';
-import { User } from '@src/model/user';
+import { User } from '@src/models/user';
 import { BaseController } from '.';
 import AuthService from '@src/services/auth';
 import { authMiddleware } from '@src/middlewares/auth';

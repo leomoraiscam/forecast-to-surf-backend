@@ -1,4 +1,4 @@
-import { CUSTOM_VALIDATION } from "@src/model/user";
+import { CUSTOM_VALIDATION } from "@src/models/user";
 import { Response } from "express";
 import mongoose  from "mongoose";
 import logger from '@src/logger';

@@ -1,5 +1,5 @@
 import { Rating } from '@src/services/rating';
-import { Beach, GeoPosition } from '@src/model/beach';
+import { Beach, GeoPosition } from '@src/models/beach';
 
 describe('Rating Service', () => {
   const defaultBeach: Beach = {
@@ -7,7 +7,7 @@ describe('Rating Service', () => {
     lng: 151.289824,
     name: 'Manly',
     position: GeoPosition.E,
-    user: 'some-user',
+    userId: 'some-user',
   };
   const defaultRating = new Rating(defaultBeach);
 
