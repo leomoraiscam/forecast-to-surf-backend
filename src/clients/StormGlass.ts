@@ -1,8 +1,8 @@
-import { InternalError } from '@src/utils/errors/internal-error';
 import config, { IConfig } from 'config';
-// Another way to have similar behaviour to TS namespaces
-import * as HTTPUtil from '@src/utils/request';
-import CacheUtil from '@src/utils/cache';
+
+import { InternalError } from '@src/utils/errors/InternalError';
+import * as HTTPUtil from '@src/utils/Request';
+import CacheUtil from '@src/utils/Cache';
 import logger from '@src/logger';
 
 export interface StormGlassPointSource {
@@ -35,19 +35,12 @@ export interface ForecastPoint {
   windSpeed: number;
 }
 
-/**
- * This error type is used when a request reaches out to the StormGlass API but returns an error
- */
 export class StormGlassUnexpectedResponseError extends InternalError {
   constructor(message: string) {
     super(message);
   }
 }
 
-/**
- * This error type is used when something breaks before the request reaches out to the StormGlass API
- * eg: Network error, or request validation error
- */
 export class ClientRequestError extends InternalError {
   constructor(message: string) {
     const internalMessage =
@@ -64,16 +57,14 @@ export class StormGlassResponseError extends InternalError {
   }
 }
 
-/**
- * We could have proper type for the configuration
- */
-const stormglassResourceConfig: IConfig = config.get(
+const stormGlassResourceConfig: IConfig = config.get(
   'App.resources.StormGlass'
 );
 
 export class StormGlass {
   readonly stormGlassAPIParams =
     'swellDirection,swellHeight,swellPeriod,waveDirection,waveHeight,windDirection,windSpeed';
+  
   readonly stormGlassAPISource = 'noaa';
 
   constructor(
@@ -88,7 +79,9 @@ export class StormGlass {
 
     if (!cachedForecastPoints) {
       const forecastPoints = await this.getForecastPointsFromApi(lat, lng);
+     
       this.setForecastPointsInCache(this.getCacheKey(lat, lng), forecastPoints);
+     
       return forecastPoints;
     }
 
@@ -101,22 +94,20 @@ export class StormGlass {
   ): Promise<ForecastPoint[]> {
     try {
       const response = await this.request.get<StormGlassForecastResponse>(
-        `${stormglassResourceConfig.get(
+        `${stormGlassResourceConfig.get(
           'apiUrl'
         )}/weather/point?lat=${lat}&lng=${lng}&params=${
           this.stormGlassAPIParams
         }&source=${this.stormGlassAPISource}`,
         {
           headers: {
-            Authorization: stormglassResourceConfig.get('apiToken'),
+            Authorization: stormGlassResourceConfig.get('apiToken'),
           },
         }
       );
+
       return this.normalizeResponse(response.data);
     } catch (err) {
-      /**
-       * This is handling the Axios errors specifically
-       */
       if (HTTPUtil.Request.isRequestError(err)) {
         throw new StormGlassResponseError(
           `Error: ${JSON.stringify(err.response.data)} Code: ${
@@ -124,6 +115,7 @@ export class StormGlass {
           }`
         );
       }
+
       throw new ClientRequestError(err.message);
     }
   }
@@ -138,6 +130,7 @@ export class StormGlass {
     }
 
     logger.info(`Using cache to return forecast points for key: ${key}`);
+
     return forecastPointsFromCache;
   }
 
@@ -150,10 +143,11 @@ export class StormGlass {
     forecastPoints: ForecastPoint[]
   ): boolean {
     logger.info(`Updating cache to return forecast points for key: ${key}`);
+    
     return this.cacheUtil.set(
       key,
       forecastPoints,
-      stormglassResourceConfig.get('cacheTtl')
+      stormGlassResourceConfig.get('cacheTtl')
     );
   }
 

@@ -1,7 +1,11 @@
 import bcrypt from 'bcryptjs';
 import config from 'config';
 import jwt from 'jsonwebtoken';
-import { User } from '@src/models/user';
+
+import IAuthConfig from '@src/dtos/IAuthConfigDTO';
+import { User } from '@src/models/User';
+
+const authConfig: IAuthConfig = config.get('App.auth');
 
 export interface DecodedUser extends Omit<User, '_id'> {
   id: string;
@@ -23,12 +27,16 @@ export default class AuthService {
   }
 
   public static generateToken(payload: object): string {
-    return jwt.sign(payload, config.get('App.auth.key'), {
-      expiresIn: config.get('App.auth.tokenExpiresIn'),
+    const { secret, expiresIn } = authConfig;
+
+    return jwt.sign(payload, secret, {
+      expiresIn
     });
   }
 
   public static decodeToken(token: string): DecodedUser {
-    return jwt.verify(token, config.get('App.auth.key')) as DecodedUser;
+    const { secret } = authConfig;
+
+    return jwt.verify(token, secret) as DecodedUser;
   }
 }
