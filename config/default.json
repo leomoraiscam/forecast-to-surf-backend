@@ -5,8 +5,8 @@
       "mongoUrl": "mongodb://localhost:15017/surf-forecast"
     },
     "auth": {
-      "key": "some-key",
-      "tokenExpiresIn": "1d"
+      "secret": "some-key",
+      "expiresIn": "1d"
     },
     "resources": {
       "StormGlass": {

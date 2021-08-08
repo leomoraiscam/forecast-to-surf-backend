@@ -16,6 +16,8 @@ export interface Beach {
   userId: string;
 }
 
+interface BeachModel extends Omit<Beach, '_id'>, Document {}
+
 const schema = new mongoose.Schema<Beach>(
   {
     lat: { type: Number, required: true },
@@ -35,5 +37,4 @@ const schema = new mongoose.Schema<Beach>(
   }
 );
 
-interface BeachModel extends Omit<Beach, '_id'>, Document {}
 export const Beach: Model<BeachModel> = mongoose.model('Beach', schema);

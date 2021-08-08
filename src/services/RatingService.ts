@@ -1,22 +1,8 @@
 import { ForecastPoint } from '@src/clients/StormGlass';
-import { Beach, GeoPosition } from '@src/models/beach';
+import { Beach, GeoPosition } from '@src/models/Beach';
+import { WAVE_HEIGHTS } from '@src/constants';
 
-const waveHeights = {
-  ankleToKnee: {
-    min: 0.3,
-    max: 1.0,
-  },
-  waistHigh: {
-    min: 1.0,
-    max: 2.0,
-  },
-  headHigh: {
-    min: 2.0,
-    max: 2.5,
-  },
-};
-
-export class Rating {
+export class RatingService {
   constructor(private beach: Beach) {}
 
   public getRatingBasedOnWindAndWavePositions(
@@ -34,15 +20,21 @@ export class Rating {
 
   public getRateForPoint(point: ForecastPoint): number {
     const swellDirection = this.getPositionFromLocation(point.swellDirection);
+
     const windDirection = this.getPositionFromLocation(point.windDirection);
+    
     const windAndWaveRating = this.getRatingBasedOnWindAndWavePositions(
       swellDirection,
       windDirection
     );
+    
     const swellHeightRating = this.getRatingForSwellSize(point.swellHeight);
+    
     const swellPeriodRating = this.getRatingForSwellPeriod(point.swellPeriod);
+    
     const finalRating =
       (windAndWaveRating + swellHeightRating + swellPeriodRating) / 3;
+    
     return Math.round(finalRating);
   }
 
@@ -77,11 +69,11 @@ export class Rating {
   }
 
   public getRatingForSwellSize(height: number): number {
-    if (height < waveHeights.ankleToKnee.min) return 1;
+    if (height < WAVE_HEIGHTS.ankleToKnee.min) return 1;
 
-    if (height < waveHeights.ankleToKnee.max) return 2;
+    if (height < WAVE_HEIGHTS.ankleToKnee.max) return 2;
     
-    if (height < waveHeights.waistHigh.max) return 3;
+    if (height < WAVE_HEIGHTS.waistHigh.max) return 3;
     
     return 5;
   }

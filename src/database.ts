@@ -1,10 +1,16 @@
-import config, { IConfig } from 'config';
+import config from 'config';
 import mongoose, { Mongoose } from 'mongoose';
 
-const dbConfig: IConfig = config.get('App.database');
+// eslint-disable-next-line @typescript-eslint/interface-name-prefix
+export default interface IDatabaseConfig {
+  mongoUrl: string;
+}
+
+
+const dbConfig: IDatabaseConfig = config.get('App.database');
 
 export const connect = async (): Promise<Mongoose> =>
-  await mongoose.connect(dbConfig.get('mongoUrl'), {
+  await mongoose.connect(dbConfig.mongoUrl, {
     useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,

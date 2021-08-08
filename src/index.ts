@@ -1,4 +1,4 @@
-import { SetupServer } from './server';
+import { App } from './App';
 import config from 'config';
 import logger from './logger';
 
@@ -22,7 +22,7 @@ process.on('uncaughtException', (error) => {
 
 (async (): Promise<void> => {
   try {
-    const server = new SetupServer(config.get('App.port'));
+    const server = new App(config.get('App.port'));
     await server.init();
     server.start();
   

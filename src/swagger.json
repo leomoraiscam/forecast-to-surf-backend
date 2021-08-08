@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "title": "Surf Forecast",
     "description": "Surf Forecast API",
-    "termsOfService": "http://api_url/terms/",
+    "termsOfService": "https://github.com/leomoraiscam/weather-surf-backend",
     "license": {
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
@@ -12,18 +12,30 @@
   },
   "servers": [
     {
-      "description": "Production Server"
+      "url": "http://localhost:3000/",
+      "description": "Local server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Users",
+      "description": "users endpoints"
     },
     {
-      "url": "http://localhost:3333/",
-      "description": "Local server"
+      "name": "Beaches",
+      "description": "beaches endpoints"
+    },
+    {
+      "name": "Forecast",
+      "description": "forecast endpoints"
     }
   ],
   "paths": {
     "/users": {
+      "summary": "Create User",
       "post": {
-        "description": "Create a new User",
-        "operationId": "createUser",
+        "summary": "Creates an user",
+        "description": "Creates an user in the application",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -37,7 +49,7 @@
         },
         "responses": {
           "201": {
-            "description": "The user has been created",
+            "description": "This will be returned when the user has been created",
             "content": {
               "application/json": {
                 "schema": {
@@ -47,7 +59,7 @@
             }
           },
           "400": {
-            "description": "Invalid parameters",
+            "description": "This will be returned when has invalid parameters",
             "content": {
               "application/json": {
                 "schema": {
@@ -60,12 +72,44 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "This will be returned when The email used is already registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "User already exists",
+                  "code": "409",
+                  "error": "Conflict"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error",
+                  "code": "500",
+                  "name": "Internal Server Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "tags": ["Users"]
       }
     },
     "/users/authenticate": {
       "post": {
+        "summary": "Authentication user",
         "description": "Authenticate the user on the API generating a JWT token",
         "operationId": "authenticateUser",
         "parameters": [],
@@ -81,7 +125,7 @@
         },
         "responses": {
           "200": {
-            "description": "The user has been authenticate and the JWT returned",
+            "description": "This will be returned when the user has been authenticate and the JWT returned",
             "content": {
               "application/json": {
                 "schema": {
@@ -90,8 +134,23 @@
               }
             }
           },
+          "400": {
+            "description": "This will be returned when has invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Invalid parameters",
+                  "code": "400",
+                  "error": "Bad Request"
+                }
+              }
+            }
+          },
           "401": {
-            "description": "Unauthorized",
+            "description": "This will be returned when the password used is invalid or user was found for the email used",
             "content": {
               "application/json": {
                 "schema": {
@@ -104,27 +163,44 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error",
+                  "code": "500",
+                  "name": "Internal Server Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "tags": ["Users"]
       }
     },
     "/users/me": {
       "get": {
-        "description": "Get the profile of the token's owner",
-        "operationId": "getUserProfile",
+        "summary": "Get an user",
+        "description": "This will be returned when get the profile of the token's owner",
         "parameters": [
           {
             "name": "x-access-token",
             "in": "header",
+            "required": true,
             "schema": {
-              "$ref": "#/components/schemas/jwtToken"
-            },
-            "required": true
+              "type": "string",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTdmZTQ0YzQzYWQwYjAwMThmOGQ5ZmQiLCJuYW1lIjoiV2FsZGVtYXIgTmV0byIsImVtYWlsIjoid2FsZGVtYXJudEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRsUlZjWkc5d0dIVWJXcHF2TnJNR0F1SnNoWWJTR1RLSElQL3NycDlmTlkzZENFZDBJQjN6TyIsImlhdCI6MTU4NTQ0MDUxNywiZXhwIjoxNTg1NDYwNTE3fQ.JNtzLgCKGTAU9_-QjYUNxtM7X4nMU_pPIsNXDsEM-vP"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "The user information",
+            "description": "This will be returned when load user information",
             "content": {
               "application/json": {
                 "schema": {
@@ -133,8 +209,23 @@
               }
             }
           },
+          "401": {
+            "description": "This will be returned when the authorization header is missing or the token is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "name": "Unauthorized"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Not Found!",
+            "description": "This will be returned when no user was found for the email used",
             "content": {
               "application/json": {
                 "schema": {
@@ -147,22 +238,40 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error",
+                  "code": "500",
+                  "name": "Internal Server Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "tags": ["Users"]
       }
     },
     "/beaches": {
       "post": {
+        "summary": "Create Beach",
         "description": "Create a new Beach belonging to the authenticated user",
         "operationId": "createBeach",
         "parameters": [
           {
             "name": "x-access-token",
             "in": "header",
+            "required": true,
             "schema": {
-              "$ref": "#/components/schemas/jwtToken"
-            },
-            "required": true
+              "type": "string",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTdmZTQ0YzQzYWQwYjAwMThmOGQ5ZmQiLCJuYW1lIjoiV2FsZGVtYXIgTmV0byIsImVtYWlsIjoid2FsZGVtYXJudEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRsUlZjWkc5d0dIVWJXcHF2TnJNR0F1SnNoWWJTR1RLSElQL3NycDlmTlkzZENFZDBJQjN6TyIsImlhdCI6MTU4NTQ0MDUxNywiZXhwIjoxNTg1NDYwNTE3fQ.JNtzLgCKGTAU9_-QjYUNxtM7X4nMU_pPIsNXDsEM-vP"
+            }
           }
         ],
         "requestBody": {
@@ -177,7 +286,7 @@
         },
         "responses": {
           "201": {
-            "description": "The Beach has been created!",
+            "description": "This will be returned when the Beach has been created!",
             "content": {
               "application/json": {
                 "schema": {
@@ -187,7 +296,7 @@
             }
           },
           "400": {
-            "description": "Error validating the beach data.",
+            "description": "This will be returned when has invalid parameters",
             "content": {
               "application/json": {
                 "schema": {
@@ -200,45 +309,112 @@
                 }
               }
             }
-          }
-        }
+          },
+          "401": {
+            "description": "This will be returned when the authorization header is missing or the token is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "name": "Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error",
+                  "code": "500",
+                  "name": "Internal Server Error"
+                }
+              }
+            }
+          }  
+        },
+        "tags": ["Beaches"]
       }
     },
     "/forecast": {
       "get": {
+        "summary": "Get an forecast",
         "description": "Get the list of forecast ordered by the most ranked",
         "operationId": "getForecast",
         "parameters": [
           {
             "name": "x-access-token",
             "in": "header",
+            "required": true,
             "schema": {
-              "$ref": "#/components/schemas/jwtToken"
-            },
-            "required": true
+              "type": "string",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTdmZTQ0YzQzYWQwYjAwMThmOGQ5ZmQiLCJuYW1lIjoiV2FsZGVtYXIgTmV0byIsImVtYWlsIjoid2FsZGVtYXJudEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRsUlZjWkc5d0dIVWJXcHF2TnJNR0F1SnNoWWJTR1RLSElQL3NycDlmTlkzZENFZDBJQjN6TyIsImlhdCI6MTU4NTQ0MDUxNywiZXhwIjoxNTg1NDYwNTE3fQ.JNtzLgCKGTAU9_-QjYUNxtM7X4nMU_pPIsNXDsEM-vP"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "The list of forecast has been returned",
+            "description": "This will be returned when the list of forecast has been returned",
             "content": {
               "application/json": {
-                "schema": {
+                "schema": { 
                   "$ref": "#/components/schemas/TimeForecast"
                 }
               }
             }
+          },
+          "401": {
+            "description": "This will be returned when the authorization header is missing or the token is invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "JWT token is missing",
+                  "code": "401",
+                  "name": "Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "message": "Internal server error",
+                  "code": "500",
+                  "name": "Internal Server Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "tags":["Forecast"]
       }
     }
   },
   "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "name": "x-access-token",
+        "in": "header"
+      }
+    },
     "schemas": {
-      "jwtToken": {
-        "type": "string",
-        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTdmZTQ0YzQzYWQwYjAwMThmOGQ5ZmQiLCJuYW1lIjoiV2FsZGVtYXIgTmV0byIsImVtYWlsIjoid2FsZGVtYXJudEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRsUlZjWkc5d0dIVWJXcHF2TnJNR0F1SnNoWWJTR1RLSElQL3NycDlmTlkzZENFZDBJQjN6TyIsImlhdCI6MTU4NTQ0MDUxNywiZXhwIjoxNTg1NDYwNTE3fQ.JNtzLgCKGTAU9_-QjYUNxtM7X4nMU_pPIsNXDsEM-vP"
-      },
       "name": {
         "type": "string",
         "example": "John Doe"
@@ -263,13 +439,18 @@
         "type": "number",
         "example": -10.55
       },
-      "id":{
+      "id": {
         "type": "string",
         "example": "5e8131eba7768d9e4f06c884"
       },
       "beachPosition": {
         "type": "string",
-        "enum": ["N", "S", "W", "E"],
+        "enum": [
+          "N",
+          "S",
+          "W",
+          "E"
+        ],
         "example": "S"
       },
       "forecastPropertyKey": {
@@ -315,12 +496,17 @@
             "$ref": "#/components/schemas/beachPosition"
           }
         },
-        "required": ["name", "lat", "lng", "position"]
+        "required": [
+          "name",
+          "lat",
+          "lng",
+          "position"
+        ]
       },
       "TimeForecast": {
-        "type":"array",
+        "type": "array",
         "items": {
-          "type":"object",
+          "type": "object",
           "properties": {
             "time": {
               "type": "string",
@@ -404,27 +590,23 @@
           "password": {
             "$ref": "#/components/schemas/password"
           }
-        }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
       },
       "UserCreatedResponse": {
         "type": "object",
         "properties": {
-          "user": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "$ref": "#/components/schemas/name"
-              },
-              "email": {
-                "$ref": "#/components/schemas/email"
-              },
-              "password": {
-                "$ref": "#/components/schemas/password"
-              },
-              "id": {
-                "$ref": "#/components/schemas/id"
-              }
-            }
+          "id": {
+            "$ref": "#/components/schemas/id"
+          },
+          "name": {
+            "$ref": "#/components/schemas/name"
+          },
+          "email": {
+            "$ref": "#/components/schemas/email"
           }
         }
       },
@@ -434,17 +616,14 @@
           "user": {
             "type": "object",
             "properties": {
+              "id": {
+                "$ref": "#/components/schemas/id"
+              },
               "name": {
                 "$ref": "#/components/schemas/name"
               },
               "email": {
                 "$ref": "#/components/schemas/email"
-              },
-              "password": {
-                "$ref": "#/components/schemas/password"
-              },
-              "id": {
-                "$ref": "#/components/schemas/id"
               },
               "token": {
                 "$ref": "#/components/schemas/jwtToken"
@@ -459,17 +638,14 @@
           "user": {
             "type": "object",
             "properties": {
+              "id": {
+                "$ref": "#/components/schemas/id"
+              },
               "name": {
                 "$ref": "#/components/schemas/name"
               },
               "email": {
                 "$ref": "#/components/schemas/email"
-              },
-              "password": {
-                "$ref": "#/components/schemas/password"
-              },
-              "id": {
-                "$ref": "#/components/schemas/id"
               }
             }
           }
@@ -513,6 +689,111 @@
           "documentation": {
             "type": "string"
           }
+        },
+        "example": {
+          "message": "Invalid parameters",
+          "code": "400",
+          "error": "Bad Request"
+        }
+      },
+      "AuthenticationError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "code": {
+            "type": "number"
+          },
+          "error": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "documentation": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "message": "User unauthorized",
+          "code": "401",
+          "error": "Unauthorized"
+        }
+      },
+      "NotFoundError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "code": {
+            "type": "number"
+          },
+          "error": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "documentation": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "message": "Not found",
+          "code": "404",
+          "error": "Not Found"
+        }
+      },
+      "InternalServerError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "code": {
+            "type": "number"
+          },
+          "error": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "documentation": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "message": "Internal Server Error",
+          "code": "500",
+          "error": "Internal Server Error"
+        }
+      },
+      "TooManyRequestsError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "code": {
+            "type": "number"
+          },
+          "error": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "documentation": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "message": "Too Many Requests",
+          "code": "429",
+          "error": "Too Many Requests"
         }
       }
     }

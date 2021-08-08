@@ -1,7 +1,9 @@
 import NodeCache from 'node-cache';
 
 class CacheUtil {
-  constructor(protected cacheService = new NodeCache()) {}
+  constructor(
+    protected cacheService = new NodeCache()
+  ) {}
 
   public set<T>(key: string, value: T, ttl = 3600): boolean {
     return this.cacheService.set(key, value, ttl);
